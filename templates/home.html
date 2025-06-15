@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM Retention AI - Inicio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Logo Styles */
+        .logo-container {
+            margin-bottom: 15px;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        .hero-logo {
+            width: 180px;
+            height: auto;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+            transition: transform 0.3s ease;
+        }
+
+        .hero-logo:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Slogan Styles */
+        .slogan {
+            margin-bottom: 20px;
+        }
+
+        .slogan p {
+            font-size: 1.3rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-style: italic;
+            text-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);
+            animation: textGlow 2s ease-in-out infinite alternate;
+            margin: 0;
+        }
+
+        @keyframes textGlow {
+            from { text-shadow: 0 2px 4px rgba(102, 126, 234, 0.1); }
+            to { text-shadow: 0 2px 8px rgba(102, 126, 234, 0.3), 0 0 20px rgba(102, 126, 234, 0.1); }
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Animación de partículas de fondo */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 60px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+            z-index: 10;
+            position: relative;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+            }
+            to {
+                text-shadow: 0 4px 30px rgba(102, 126, 234, 0.6), 0 0 40px rgba(118, 75, 162, 0.4);
+            }
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            color: #777;
+            margin-bottom: 50px;
+            line-height: 1.6;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .highlight {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .option-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+            border-radius: 20px;
+            padding: 40px 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s;
+        }
+
+        .option-card:hover::before {
+            left: 100%;
+        }
+
+        .option-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .option-icon {
+            font-size: 4rem;
+            margin-bottom: 25px;
+            display: block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .admin-card .option-icon {
+            animation-delay: 0.2s;
+        }
+
+        .student-card .option-icon {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .option-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .option-description {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .option-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .option-features li {
+            padding: 8px 0;
+            color: #555;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .option-features li::before {
+            content: "✨";
+            position: absolute;
+            left: 0;
+            top: 8px;
+        }
+
+        .admin-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        }
+
+        .admin-card:hover {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+        }
+
+        .student-card {
+            background: linear-gradient(135deg, rgba(240, 147, 251, 0.1), rgba(245, 101, 101, 0.1));
+        }
+
+        .student-card:hover {
+            border-color: #f093fb;
+            background: linear-gradient(135deg, rgba(240, 147, 251, 0.15), rgba(245, 101, 101, 0.15));
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .student-card .action-button {
+            background: linear-gradient(135deg, #f093fb, #f5a623);
+        }
+
+        .student-card .action-button:hover {
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            z-index: 10;
+            text-align: center;
+            max-width: 800px;
+            line-height: 1.4;
+        }
+
+        /* Final Description Styles */
+        .final-description {
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .final-description p {
+            font-size: 1.2rem;
+            color: #555;
+            line-height: 1.6;
+            margin: 0;
+            text-align: center;
+        }
+
+        .stats-preview {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 40px 0;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .main-content {
+                padding: 40px 25px;
+                margin: 20px 0;
+            }
+
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .hero-logo {
+                width: 120px;
+            }
+
+            .slogan p {
+                font-size: 1.1rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .description {
+                font-size: 1rem;
+            }
+
+            .options-container {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .option-card {
+                padding: 30px 20px;
+            }
+
+            .option-icon {
+                font-size: 3rem;
+            }
+
+            .option-title {
+                font-size: 1.5rem;
+            }
+
+            .stats-preview {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .final-description {
+                margin-top: 30px;
+                padding: 20px;
+            }
+
+            .final-description p {
+                font-size: 1rem;
+            }
+        }
+
+        /* Nuevos estilos para animaciones de entrada */
+        .option-card {
+            animation: slideInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .admin-card {
+            animation-delay: 0.3s;
+        }
+
+        .student-card {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 20px rgba(102, 126, 234, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="main-content">
+            <div class="logo-container">
+                <img src="static/image/logo.png" alt="STEM Retention AI Logo" class="hero-logo">
+            </div>
+            <h1 class="logo">STEM Retention AI</h1>
+            <div class="slogan">
+                <p>Juntas en STEM, hasta la meta.</p>
+            </div>
+            <p class="subtitle">Sistema Inteligente de <span class="highlight">Retención Estudiantil</span></p>
+
+            <div class="stats-preview">
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-students">0</span>
+                    <div class="stat-label">Estudiantes Monitoreadas</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-retention">0%</span>
+                    <div class="stat-label">Mejora en Retención</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="stat-interventions">0</span>
+                    <div class="stat-label">Intervenciones Exitosas</div>
+                </div>
+            </div>
+
+            <div class="options-container">
+                <!-- Opción para Administradores/Staff -->
+                <div class="option-card admin-card" onclick="goToDashboard()">
+                    <span class="option-icon">📊</span>
+                    <h2 class="option-title">Dashboard Administrativo</h2>
+                    <p class="option-description">
+                        Panel de control completo para coordinadores académicos y personal administrativo.
+                    </p>
+                    <ul class="option-features">
+                        <li>Análisis predictivo de riesgo</li>
+                        <li>Métricas de retención en tiempo real</li>
+                        <li>Gestión de intervenciones</li>
+                        <li>Asignación de mentoras</li>
+                        <li>Reportes de impacto financiero</li>
+                    </ul>
+                    <button class="action-button">
+                        Acceder al Dashboard
+                    </button>
+                </div>
+
+                <!-- Opción para Estudiantes -->
+                <div class="option-card student-card" onclick="goToSupport()">
+                    <span class="option-icon">🌟</span>
+                    <h2 class="option-title">Centro de Apoyo Estudiantil</h2>
+                    <p class="option-description">
+                        Espacio seguro y confidencial para solicitar ayuda y apoyo académico personalizado.
+                    </p>
+                    <ul class="option-features">
+                        <li>Solicitudes anónimas disponibles</li>
+                        <li>Apoyo emocional y académico</li>
+                        <li>Conexión con mentoras</li>
+                        <li>Recursos de autoayuda</li>
+                        <li>Respuesta prioritaria en crisis</li>
+                    </ul>
+                    <button class="action-button">
+                        Solicitar Apoyo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Descripción final -->
+            <div class="final-description">
+                <p>Plataforma integral diseñada para <strong>prevenir la deserción</strong> de mujeres en carreras STEM a través de <span class="highlight">inteligencia artificial</span>, <span class="highlight">intervenciones personalizadas</span> y <span class="highlight">apoyo estudiantil especializado</span>.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>STEM Retention AI &copy; 2025 - Empoderando el futuro de las mujeres en STEM</p>
+        </div>
+    </div>
+
+    <script>
+        // Crear partículas animadas de fondo
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Tamaño aleatorio
+                const size = Math.random() * 6 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Posición inicial aleatoria
+                particle.style.left = Math.random() * 100 + '%';
+                
+                // Duración de animación aleatoria
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Animar números de estadísticas
+        function animateStats() {
+            const students = document.getElementById('stat-students');
+            const retention = document.getElementById('stat-retention');
+            const interventions = document.getElementById('stat-interventions');
+
+            // Animar contador de estudiantes
+            animateNumber(students, 0, 150, 2000);
+            
+            // Animar porcentaje de retención
+            setTimeout(() => {
+                animateNumber(retention, 0, 25, 2000, '%');
+            }, 500);
+            
+            // Animar intervenciones
+            setTimeout(() => {
+                animateNumber(interventions, 0, 89, 2000);
+            }, 1000);
+        }
+
+        function animateNumber(element, start, end, duration, suffix = '') {
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const current = Math.floor(start + (end - start) * easeOutCubic(progress));
+                element.textContent = current + suffix;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        function easeOutCubic(t) {
+            return 1 - Math.pow(1 - t, 3);
+        }
+
+        // Funciones de navegación
+        function goToDashboard() {
+            // Agregar efecto de clic
+            event.currentTarget.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 200);
+        }
+
+        function goToSupport() {
+            // Agregar efecto de clic
+            event.currentTarget.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                window.location.href = '/student_support.html';
+            }, 200);
+        }
+
+        // Efectos de hover mejorados
+        document.querySelectorAll('.option-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.classList.add('pulse');
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.classList.remove('pulse');
+            });
+        });
+
+        // Cargar estadísticas reales del sistema
+        async function loadRealStats() {
+            try {
+                const response = await fetch('/api/dashboard_stats');
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Actualizar con datos reales
+                    setTimeout(() => {
+                        animateNumber(document.getElementById('stat-students'), 0, data.total_students || 8, 2000);
+                    }, 1500);
+                    
+                    setTimeout(() => {
+                        animateNumber(document.getElementById('stat-retention'), 0, 25, 2000, '%');
+                    }, 2000);
+                    
+                    setTimeout(() => {
+                        animateNumber(document.getElementById('stat-interventions'), 0, data.active_interventions || 12, 2000);
+                    }, 2500);
+                }
+            } catch (error) {
+                console.log('Usando estadísticas predeterminadas');
+                // Mantener animación predeterminada si no hay datos
+            }
+        }
+
+        // Efectos de teclado para accesibilidad
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '1' || e.key === 'd' || e.key === 'D') {
+                goToDashboard();
+            } else if (e.key === '2' || e.key === 's' || e.key === 'S') {
+                goToSupport();
+            }
+        });
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            setTimeout(animateStats, 1000);
+            setTimeout(loadRealStats, 2000);
+            
+            // Agregar tooltip informativo
+            const tooltip = document.createElement('div');
+            tooltip.innerHTML = '💡 Tip: Usa las teclas "1" o "2" para navegación rápida';
+            tooltip.style.cssText = `
+                position: fixed;
+                bottom: 60px;
+                right: 20px;
+                background: rgba(0,0,0,0.8);
+                color: white;
+                padding: 10px 15px;
+                border-radius: 20px;
+                font-size: 0.8rem;
+                z-index: 1000;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            `;
+            document.body.appendChild(tooltip);
+            
+            // Mostrar tooltip después de 3 segundos
+            setTimeout(() => {
+                tooltip.style.opacity = '1';
+                setTimeout(() => {
+                    tooltip.style.opacity = '0';
+                }, 3000);
+            }, 3000);
+        });
+
+        console.log('🌟 STEM Retention AI - Pantalla de Inicio Cargada');
+        console.log('📋 Atajos de teclado disponibles:');
+        console.log('   - Tecla "1" o "D": Dashboard Administrativo');
+        console.log('   - Tecla "2" o "S": Centro de Apoyo Estudiantil');
+    </script>
+</body>
+</html>

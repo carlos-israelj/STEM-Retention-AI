@@ -35,6 +35,18 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
         }
 
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-text {
+            flex: 1;
+        }
+
         .header h1 {
             background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
@@ -47,6 +59,33 @@
         .header p {
             color: #666;
             font-size: 1.1rem;
+        }
+
+        .btn-home {
+            background: linear-gradient(135deg, #f093fb, #f5a623);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+        }
+
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(240, 147, 251, 0.5);
+            background: linear-gradient(135deg, #f5a623, #f093fb);
+        }
+
+        .btn-home:active {
+            transform: translateY(-1px);
         }
 
         .stats-grid {
@@ -243,14 +282,31 @@
             .header h1 {
                 font-size: 2rem;
             }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .btn-home {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 STEM Retention AI</h1>
-            <p>Sistema Predictivo para Reducir la Deserción Femenina en Carreras STEM</p>
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>🎯 STEM Retention AI</h1>
+                    <p>Sistema Predictivo para Reducir la Deserción Femenina en Carreras STEM</p>
+                </div>
+                <button class="btn-home" onclick="goToHome()">
+                    🏠 Volver al Inicio
+                </button>
+            </div>
         </div>
 
         <div class="controls">
@@ -491,6 +547,11 @@
             
             alert('✅ Puntuaciones de riesgo actualizadas');
             loadStudents();
+        }
+
+        // Función para volver al home
+        function goToHome() {
+            window.location.href = '/';
         }
     </script>
 </body>
