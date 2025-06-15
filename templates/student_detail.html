@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM Retention AI - Detalle Estudiante</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .student-info h1 {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .student-info .meta {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .student-info .program {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .risk-display {
+            text-align: center;
+        }
+
+        .risk-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            position: relative;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .risk-label {
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .panel h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .small-chart {
+            height: 250px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Specific metric card colors */
+        .grade-card { border-left-color: #3498db; }
+        .attendance-card { border-left-color: #27ae60; }
+        .tasks-card { border-left-color: #f39c12; }
+        .participation-card { border-left-color: #9b59b6; }
+
+        /* Subject grades table */
+        .subjects-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .subjects-table th,
+        .subjects-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .subjects-table th {
+            background: rgba(102, 126, 234, 0.1);
+            font-weight: 600;
+            color: #333;
+        }
+
+        .subjects-table td {
+            color: #555;
+        }
+
+        .grade-badge {
+            padding: 4px 12px;
+            border-radius: 15px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .grade-excellent { background: #27ae60; }
+        .grade-good { background: #f39c12; }
+        .grade-poor { background: #e74c3c; }
+
+        /* Tasks dashboard */
+        .tasks-dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .task-stat {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border-top: 4px solid;
+        }
+
+        .task-delivered { border-top-color: #27ae60; }
+        .task-pending { border-top-color: #f39c12; }
+        .task-overdue { border-top-color: #e74c3c; }
+
+        .task-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .task-delivered .task-number { color: #27ae60; }
+        .task-pending .task-number { color: #f39c12; }
+        .task-overdue .task-number { color: #e74c3c; }
+
+        .task-label {
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        /* Attendance details */
+        .attendance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .attendance-item {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid;
+        }
+
+        .attendance-excellent { border-left-color: #27ae60; }
+        .attendance-good { border-left-color: #f39c12; }
+        .attendance-poor { border-left-color: #e74c3c; }
+
+        .attendance-subject {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .attendance-rate {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .attendance-details {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .timeline {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 20px 0 20px 40px;
+            border-left: 2px solid #e1e8ed;
+        }
+
+        .timeline-item:last-child {
+            border-left: 2px solid transparent;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 25px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #667eea;
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .timeline-date {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .timeline-description {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .mentor-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .mentor-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 15px;
+        }
+
+        .mentor-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .mentor-position {
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .mentor-stats {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .mentor-stat {
+            text-align: center;
+        }
+
+        .mentor-stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .mentor-stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 8px 25px rgba(17, 153, 142, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        }
+
+        .actions {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .high-risk { 
+            background: #e74c3c !important;
+            border-left-color: #e74c3c !important;
+        }
+        .medium-risk { 
+            background: #f39c12 !important;
+            border-left-color: #f39c12 !important;
+        }
+        .low-risk { 
+            background: #27ae60 !important;
+            border-left-color: #27ae60 !important;
+        }
+
+        .intervention-level-1::before { background: #f39c12 !important; }
+        .intervention-level-2::before { background: #e67e22 !important; }
+        .intervention-level-3::before { background: #e74c3c !important; }
+
+        @media (max-width: 768px) {
+            .header {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tasks-dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .attendance-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-button">
+            ← Volver al Dashboard
+        </a>
+
+        <div class="header" id="student-header">
+            <div class="loading">
+                <div class="spinner"></div>
+                Cargando información del estudiante...
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn" onclick="updateRiskScore()">⚡ Recalcular Riesgo</button>
+            <button class="btn-secondary btn" onclick="triggerIntervention()">🎯 Activar Intervención</button>
+            <button class="btn-secondary btn" onclick="assignMentor()">👥 Asignar Mentora</button>
+            <button class="btn-danger btn" onclick="generateReport()">📄 Generar Reporte</button>
+        </div>
+
+        <div class="main-content">
+            <!-- Métricas Académicas Generales -->
+            <div class="panel">
+                <h3>📊 Resumen Académico</h3>
+                <div class="metrics-grid" id="academic-summary">
+                    <div class="loading">Cargando métricas...</div>
+                </div>
+                <div class="chart-container small-chart">
+                    <canvas id="academicSummaryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Tareas Dashboard -->
+            <div class="panel">
+                <h3>📝 Estado de Tareas</h3>
+                <div class="tasks-dashboard" id="tasks-dashboard">
+                    <div class="loading">Cargando tareas...</div>
+                </div>
+                <div class="chart-container small-chart">
+                    <canvas id="tasksChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Notas por Materia -->
+            <div class="panel full-width">
+                <h3>📚 Rendimiento por Materia</h3>
+                <table class="subjects-table" id="subjects-table">
+                    <thead>
+                        <tr>
+                            <th>Materia</th>
+                            <th>Nota Actual</th>
+                            <th>Tendencia</th>
+                            <th>Asistencia</th>
+                            <th>Tareas</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6" class="loading">Cargando materias...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Asistencia Detallada -->
+            <div class="panel">
+                <h3>🎯 Asistencia por Materia</h3>
+                <div class="attendance-grid" id="attendance-grid">
+                    <div class="loading">Cargando asistencia...</div>
+                </div>
+            </div>
+
+            <!-- Métricas Comportamentales -->
+            <div class="panel">
+                <h3>🧠 Métricas Comportamentales</h3>
+                <div class="metrics-grid" id="behavioral-metrics">
+                    <div class="loading">Cargando métricas...</div>
+                </div>
+                <div class="chart-container small-chart">
+                    <canvas id="behavioralChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Historial de Intervenciones -->
+            <div class="panel">
+                <h3>🎯 Historial de Intervenciones</h3>
+                <div class="timeline" id="interventions-timeline">
+                    <div class="loading">Cargando intervenciones...</div>
+                </div>
+            </div>
+
+            <!-- Mentora Asignada -->
+            <div class="panel">
+                <h3>👩‍🏫 Mentora Asignada</h3>
+                <div id="mentor-info">
+                    <div class="loading">Cargando información de mentora...</div>
+                </div>
+            </div>
+
+            <!-- Evolución del Riesgo -->
+            <div class="panel full-width">
+                <h3>📈 Evolución del Riesgo</h3>
+                <div class="chart-container">
+                    <canvas id="riskEvolutionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const studentId = {{ student_id }};
+        let studentData = null;
+        let charts = {};
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStudentData();
+        });
+
+        async function loadStudentData() {
+            try {
+                const response = await fetch(`/api/students/${studentId}`);
+                studentData = await response.json();
+                renderStudentHeader();
+                renderAcademicSummary();
+                renderTasksDashboard();
+                renderSubjectsTable();
+                renderAttendanceGrid();
+                renderBehavioralMetrics();
+                renderInterventionsTimeline();
+                renderMentorInfo();
+                renderCharts();
+            } catch (error) {
+                console.error('Error cargando datos del estudiante:', error);
+                document.getElementById('student-header').innerHTML = 
+                    '<div class="loading">❌ Error al cargar datos del estudiante</div>';
+            }
+        }
+
+        function renderStudentHeader() {
+            const riskLevel = getRiskLevel(studentData.risk_score);
+            const riskColor = getRiskColor(studentData.risk_score);
+            const riskText = getRiskText(studentData.risk_score);
+
+            document.getElementById('student-header').innerHTML = `
+                <div class="student-info">
+                    <h1>${studentData.name}</h1>
+                    <div class="meta">
+                        📧 ${studentData.email} | 🎓 Semestre ${studentData.semester} | 📅 Ingreso ${studentData.entry_year}
+                    </div>
+                    <div class="program">${studentData.program}</div>
+                </div>
+                <div class="risk-display">
+                    <div class="risk-circle ${riskLevel}" style="background-color: ${riskColor}">
+                        ${(studentData.risk_score * 100).toFixed(0)}%
+                    </div>
+                    <div class="risk-label" style="color: ${riskColor}">${riskText}</div>
+                </div>
+            `;
+        }
+
+        function renderAcademicSummary() {
+            if (!studentData.academic_records || studentData.academic_records.length === 0) {
+                document.getElementById('academic-summary').innerHTML = 
+                    '<div class="loading">📝 No hay registros académicos</div>';
+                return;
+            }
+
+            // Calcular promedios
+            const avgGrade = calculateAverage(studentData.academic_records, 'grade');
+            const avgAttendance = calculateAverage(studentData.academic_records, 'attendance_rate');
+            const avgParticipation = calculateAverage(studentData.academic_records, 'participation_score');
+            const avgTasks = calculateAverage(studentData.academic_records, 'assignment_completion');
+
+            document.getElementById('academic-summary').innerHTML = `
+                <div class="metric-card grade-card">
+                    <div class="metric-value">${avgGrade.toFixed(1)}</div>
+                    <div class="metric-label">Promedio General</div>
+                </div>
+                <div class="metric-card attendance-card">
+                    <div class="metric-value">${avgAttendance.toFixed(0)}%</div>
+                    <div class="metric-label">Asistencia Promedio</div>
+                </div>
+                <div class="metric-card participation-card">
+                    <div class="metric-value">${avgParticipation.toFixed(0)}</div>
+                    <div class="metric-label">Participación</div>
+                </div>
+                <div class="metric-card tasks-card">
+                    <div class="metric-value">${avgTasks.toFixed(0)}%</div>
+                    <div class="metric-label">Tareas Completadas</div>
+                </div>
+            `;
+        }
+
+        function renderTasksDashboard() {
+            // Simular datos de tareas basados en los registros académicos
+            const totalSubjects = studentData.academic_records ? studentData.academic_records.length : 0;
+            const avgCompletion = totalSubjects > 0 ? calculateAverage(studentData.academic_records, 'assignment_completion') : 0;
+            
+            // Estimar tareas entregadas, pendientes y atrasadas
+            const estimatedTotalTasks = totalSubjects * 4; // 4 tareas por materia
+            const delivered = Math.round((avgCompletion / 100) * estimatedTotalTasks);
+            const pending = Math.round(estimatedTotalTasks * 0.2); // 20% pendientes
+            const overdue = estimatedTotalTasks - delivered - pending;
+
+            document.getElementById('tasks-dashboard').innerHTML = `
+                <div class="task-stat task-delivered">
+                    <div class="task-number">${delivered}</div>
+                    <div class="task-label">Entregadas</div>
+                </div>
+                <div class="task-stat task-pending">
+                    <div class="task-number">${pending}</div>
+                    <div class="task-label">Pendientes</div>
+                </div>
+                <div class="task-stat task-overdue">
+                    <div class="task-number">${Math.max(0, overdue)}</div>
+                    <div class="task-label">Atrasadas</div>
+                </div>
+            `;
+        }
+
+        function renderSubjectsTable() {
+            if (!studentData.academic_records || studentData.academic_records.length === 0) {
+                document.querySelector('#subjects-table tbody').innerHTML = 
+                    '<tr><td colspan="6" class="loading">📚 No hay registros de materias</td></tr>';
+                return;
+            }
+
+            const tableBody = document.querySelector('#subjects-table tbody');
+            tableBody.innerHTML = studentData.academic_records.map(record => {
+                const gradeClass = getGradeClass(record.grade);
+                const attendanceClass = getAttendanceClass(record.attendance_rate);
+                const tasksStatus = getTasksStatus(record.assignment_completion);
+                const trend = getTrend(); // Simular tendencia
+
+                return `
+                    <tr>
+                        <td><strong>${record.subject}</strong></td>
+                        <td>
+                            <span class="grade-badge ${gradeClass}">
+                                ${record.grade ? record.grade.toFixed(1) : 'N/A'}
+                            </span>
+                        </td>
+                        <td>${trend}</td>
+                        <td>${record.attendance_rate ? record.attendance_rate.toFixed(0) + '%' : 'N/A'}</td>
+                        <td>${record.assignment_completion ? record.assignment_completion.toFixed(0) + '%' : 'N/A'}</td>
+                        <td>${getSubjectStatus(record.grade, record.attendance_rate)}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderAttendanceGrid() {
+            if (!studentData.academic_records || studentData.academic_records.length === 0) {
+                document.getElementById('attendance-grid').innerHTML = 
+                    '<div class="loading">🎯 No hay registros de asistencia</div>';
+                return;
+            }
+
+            document.getElementById('attendance-grid').innerHTML = studentData.academic_records.map(record => {
+                const attendanceClass = getAttendanceClassDetailed(record.attendance_rate);
+                const attendanceStatus = getAttendanceStatus(record.attendance_rate);
+                
+                // Simular clases asistidas vs total
+                const totalClasses = 16; // Semestre típico
+                const attendedClasses = Math.round((record.attendance_rate / 100) * totalClasses);
+
+                return `
+                    <div class="attendance-item ${attendanceClass}">
+                        <div class="attendance-subject">${record.subject}</div>
+                        <div class="attendance-rate" style="color: ${getAttendanceColor(record.attendance_rate)}">
+                            ${record.attendance_rate ? record.attendance_rate.toFixed(0) + '%' : 'N/A'}
+                        </div>
+                        <div class="attendance-details">
+                            ${attendedClasses}/${totalClasses} clases asistidas • ${attendanceStatus}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderBehavioralMetrics() {
+            if (!studentData.behavioral_records || studentData.behavioral_records.length === 0) {
+                document.getElementById('behavioral-metrics').innerHTML = 
+                    '<div class="loading">🧠 No hay registros comportamentales</div>';
+                return;
+            }
+
+            const latest = studentData.behavioral_records[0];
+            document.getElementById('behavioral-metrics').innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-value">${latest.oral_participation ? latest.oral_participation.toFixed(0) : 'N/A'}</div>
+                    <div class="metric-label">Participación Oral</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${latest.self_assessment_confidence ? latest.self_assessment_confidence.toFixed(0) : 'N/A'}</div>
+                    <div class="metric-label">Confianza</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${latest.teacher_interaction_frequency ? latest.teacher_interaction_frequency.toFixed(0) : 'N/A'}</div>
+                    <div class="metric-label">Interacción</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${latest.impostor_syndrome_indicators ? (100 - latest.impostor_syndrome_indicators).toFixed(0) : 'N/A'}</div>
+                    <div class="metric-label">Seguridad</div>
+                </div>
+            `;
+        }
+
+        function renderInterventionsTimeline() {
+            if (!studentData.interventions || studentData.interventions.length === 0) {
+                document.getElementById('interventions-timeline').innerHTML = 
+                    '<div class="loading">🎯 No hay intervenciones registradas</div>';
+                return;
+            }
+
+            const timelineHTML = studentData.interventions.map(intervention => {
+                const date = new Date(intervention.created_at).toLocaleDateString('es-ES');
+                const levelClass = `intervention-level-${intervention.level}`;
+                const typeEmoji = {
+                    'automatic': '🤖',
+                    'mentor': '👥',
+                    'counselor': '🆘'
+                }[intervention.type] || '🎯';
+
+                return `
+                    <div class="timeline-item ${levelClass}">
+                        <div class="timeline-content">
+                            <div class="timeline-date">${date}</div>
+                            <div class="timeline-title">${typeEmoji} Nivel ${intervention.level} - ${intervention.type}</div>
+                            <div class="timeline-description">${intervention.content}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('interventions-timeline').innerHTML = timelineHTML;
+        }
+
+        function renderMentorInfo() {
+            if (!studentData.mentor) {
+                document.getElementById('mentor-info').innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">👩‍🏫</div>
+                        <h3>Sin Mentora Asignada</h3>
+                        <p style="color: #666; margin: 15px 0;">Esta estudiante aún no tiene una mentora asignada.</p>
+                        <button class="btn-secondary btn" onclick="assignMentor()">Asignar Mentora</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const mentor = studentData.mentor;
+            document.getElementById('mentor-info').innerHTML = `
+                <div class="mentor-card">
+                    <div class="mentor-avatar">👩‍💼</div>
+                    <div class="mentor-name">${mentor.name}</div>
+                    <div class="mentor-position">${mentor.current_position}</div>
+                    <div class="mentor-stats">
+                        <div class="mentor-stat">
+                            <div class="mentor-stat-value">${(mentor.match_score * 100).toFixed(0)}%</div>
+                            <div class="mentor-stat-label">Compatibilidad</div>
+                        </div>
+                        <div class="mentor-stat">
+                            <div class="mentor-stat-value">${mentor.program}</div>
+                            <div class="mentor-stat-label">Programa</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCharts() {
+            renderAcademicSummaryChart();
+            renderTasksChart();
+            renderBehavioralChart();
+            renderRiskEvolutionChart();
+        }
+
+        function renderAcademicSummaryChart() {
+            const ctx = document.getElementById('academicSummaryChart').getContext('2d');
+            
+            if (charts.academicSummary) {
+                charts.academicSummary.destroy();
+            }
+
+            if (!studentData.academic_records || studentData.academic_records.length === 0) {
+                return;
+            }
+
+            const avgGrade = calculateAverage(studentData.academic_records, 'grade');
+            const avgAttendance = calculateAverage(studentData.academic_records, 'attendance_rate');
+            const avgParticipation = calculateAverage(studentData.academic_records, 'participation_score');
+            const avgTasks = calculateAverage(studentData.academic_records, 'assignment_completion');
+            
+            charts.academicSummary = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Notas', 'Asistencia', 'Participación', 'Tareas'],
+                    datasets: [{
+                        label: 'Rendimiento Académico',
+                        data: [avgGrade, avgAttendance, avgParticipation, avgTasks],
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(102, 126, 234, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderTasksChart() {
+            const ctx = document.getElementById('tasksChart').getContext('2d');
+            
+            if (charts.tasks) {
+                charts.tasks.destroy();
+            }
+
+            // Calcular datos de tareas
+            const totalSubjects = studentData.academic_records ? studentData.academic_records.length : 0;
+            const avgCompletion = totalSubjects > 0 ? calculateAverage(studentData.academic_records, 'assignment_completion') : 0;
+            
+            const estimatedTotalTasks = totalSubjects * 4;
+            const delivered = Math.round((avgCompletion / 100) * estimatedTotalTasks);
+            const pending = Math.round(estimatedTotalTasks * 0.2);
+            const overdue = Math.max(0, estimatedTotalTasks - delivered - pending);
+
+            charts.tasks = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Entregadas', 'Pendientes', 'Atrasadas'],
+                    datasets: [{
+                        data: [delivered, pending, overdue],
+                        backgroundColor: ['#27ae60', '#f39c12', '#e74c3c'],
+                        borderWidth: 3,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: {
+                                    size: 11,
+                                    weight: '600'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderBehavioralChart() {
+            const ctx = document.getElementById('behavioralChart').getContext('2d');
+            
+            if (charts.behavioral) {
+                charts.behavioral.destroy();
+            }
+
+            if (!studentData.behavioral_records || studentData.behavioral_records.length === 0) {
+                return;
+            }
+
+            const latest = studentData.behavioral_records[0];
+            
+            charts.behavioral = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Participación Oral', 'Confianza', 'Interacción', 'Trabajo Grupal', 'Seguridad'],
+                    datasets: [{
+                        label: 'Aspectos Comportamentales',
+                        data: [
+                            latest.oral_participation || 0,
+                            latest.self_assessment_confidence || 0,
+                            latest.teacher_interaction_frequency || 0,
+                            latest.group_work_engagement || 0,
+                            100 - (latest.impostor_syndrome_indicators || 0)
+                        ],
+                        backgroundColor: 'rgba(17, 153, 142, 0.2)',
+                        borderColor: 'rgba(17, 153, 142, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(17, 153, 142, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderRiskEvolutionChart() {
+            const ctx = document.getElementById('riskEvolutionChart').getContext('2d');
+            
+            if (charts.riskEvolution) {
+                charts.riskEvolution.destroy();
+            }
+
+            // Simular evolución del riesgo
+            const dates = [];
+            const riskScores = [];
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setMonth(date.getMonth() - i);
+                dates.push(date.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' }));
+                
+                let simulatedRisk = studentData.risk_score + (Math.random() - 0.5) * 0.2;
+                if (i > 3) simulatedRisk += 0.1;
+                riskScores.push(Math.max(0, Math.min(1, simulatedRisk)) * 100);
+            }
+
+            charts.riskEvolution = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Riesgo de Deserción (%)',
+                        data: riskScores,
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#e74c3c',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Funciones de utilidad
+        function calculateAverage(records, field) {
+            const validRecords = records.filter(r => r[field] != null);
+            if (validRecords.length === 0) return 0;
+            return validRecords.reduce((sum, r) => sum + r[field], 0) / validRecords.length;
+        }
+
+        function getGradeClass(grade) {
+            if (!grade) return 'grade-poor';
+            if (grade >= 85) return 'grade-excellent';
+            if (grade >= 70) return 'grade-good';
+            return 'grade-poor';
+        }
+
+        function getAttendanceClass(attendance) {
+            if (!attendance) return 'attendance-poor';
+            if (attendance >= 90) return 'attendance-excellent';
+            if (attendance >= 75) return 'attendance-good';
+            return 'attendance-poor';
+        }
+
+        function getAttendanceClassDetailed(attendance) {
+            if (!attendance) return 'attendance-poor';
+            if (attendance >= 90) return 'attendance-excellent';
+            if (attendance >= 80) return 'attendance-good';
+            return 'attendance-poor';
+        }
+
+        function getAttendanceColor(attendance) {
+            if (!attendance) return '#e74c3c';
+            if (attendance >= 90) return '#27ae60';
+            if (attendance >= 80) return '#f39c12';
+            return '#e74c3c';
+        }
+
+        function getAttendanceStatus(attendance) {
+            if (!attendance) return 'Sin datos';
+            if (attendance >= 90) return 'Excelente';
+            if (attendance >= 80) return 'Buena';
+            if (attendance >= 70) return 'Regular';
+            return 'Crítica';
+        }
+
+        function getTasksStatus(completion) {
+            if (!completion) return 'Sin datos';
+            if (completion >= 90) return 'Al día';
+            if (completion >= 70) return 'Regular';
+            return 'Atrasada';
+        }
+
+        function getSubjectStatus(grade, attendance) {
+            if (!grade || !attendance) return '⚠️ Datos incompletos';
+            if (grade >= 70 && attendance >= 80) return '✅ En progreso';
+            if (grade >= 60 && attendance >= 70) return '⚠️ Requiere atención';
+            return '🚨 Riesgo crítico';
+        }
+
+        function getTrend() {
+            const trends = ['📈 Mejorando', '📊 Estable', '📉 Declinando'];
+            return trends[Math.floor(Math.random() * trends.length)];
+        }
+
+        function getRiskLevel(score) {
+            if (score >= 0.7) return 'high-risk';
+            if (score >= 0.4) return 'medium-risk';
+            return 'low-risk';
+        }
+
+        function getRiskColor(score) {
+            if (score >= 0.7) return '#e74c3c';
+            if (score >= 0.4) return '#f39c12';
+            return '#27ae60';
+        }
+
+        function getRiskText(score) {
+            if (score >= 0.8) return 'Riesgo Crítico';
+            if (score >= 0.6) return 'Riesgo Alto';
+            if (score >= 0.3) return 'Riesgo Medio';
+            return 'Bajo Riesgo';
+        }
+
+        // Funciones de acción
+        async function updateRiskScore() {
+            try {
+                const response = await fetch(`/api/students/${studentId}/risk`);
+                const result = await response.json();
+                alert(`✅ Riesgo actualizado: ${(result.risk_score * 100).toFixed(1)}%`);
+                loadStudentData();
+            } catch (error) {
+                console.error('Error actualizando riesgo:', error);
+                alert('❌ Error al actualizar riesgo');
+            }
+        }
+
+        function triggerIntervention() {
+            alert('🎯 Funcionalidad de intervención manual en desarrollo');
+        }
+
+        function assignMentor() {
+            alert('👥 Funcionalidad de asignación de mentora en desarrollo');
+        }
+
+        function generateReport() {
+            alert('📄 Generando reporte completo de la estudiante...');
+        }
+    </script>
+</body>
+</html>
